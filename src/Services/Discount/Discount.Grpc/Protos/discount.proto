@@ -1,0 +1,56 @@
+﻿//IMP: we have to do this step in this file properties
+//1-Set Build Action to Protobuf Compiler
+//2-Set gRPC Stub Classes to Server only
+//3-After change 1&2 the below lines will be added in the project file
+//<ItemGroup>
+//<None Remove="Protos\discount.proto" />
+//</ItemGroup>
+//<ItemGroup>
+//<Protobuf Include="Protos\discount.proto" GrpcServices="Server" />
+//</ItemGroup>
+//After building the project, visual studio will generate to us DiscountProtoService inside obj/Debug/net8.0/Protos/DiscountGrpc.cs/DiscountProtoService
+
+
+//this is to tell the compiler which protobuf compiler version we are using
+syntax = "proto3";
+
+//this line is optional, this is just to tell protobuf compiler what is the namespace of the generated classes Discount.Grpc
+option csharp_namespace = "Discount.Grpc";
+
+package discount;
+
+//The discount service definition
+service DiscountProtoService{
+	//Discount CRUD Operations
+	rpc GetDiscount (GetDiscountRequest) returns (CouponModel);
+	rpc CreateDiscount (CreateDiscountRequest) returns (CouponModel);
+	rpc UpdateDiscount (UpdateDiscountRequest) returns (CouponModel);
+	rpc DeleteDiscount (DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+message GetDiscountRequest{
+	string productName = 1;
+}
+
+message CouponModel{
+	int32 id = 1;
+	string productName = 2;
+	string description = 3;
+	int32 amount = 4;
+}
+
+message CreateDiscountRequest{
+	CouponModel coupon = 1;
+}
+
+message UpdateDiscountRequest{
+	CouponModel coupon = 1;
+}
+
+message DeleteDiscountRequest{
+	string productName = 1;
+}
+
+message DeleteDiscountResponse{
+	bool success = 1;
+}
