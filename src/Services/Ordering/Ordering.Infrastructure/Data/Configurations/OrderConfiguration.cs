@@ -110,6 +110,11 @@ namespace Ordering.Infrastructure.Data.Configurations
                    .HasConversion(s => s.ToString(), dbStatus => (OrderStatus)Enum.Parse(typeof(OrderStatus), dbStatus));
 
             builder.Property(o => o.TotalPrice);
+
+            //This line added to avoid this exception thrown while adding the migration
+            //Command:Add-Migration InitialCreate -OutputDir Data/Migrations -Project Ordering.Infrastructure -StartupProject Ordering.API
+            //Error:Unable to create a 'DbContext' of type ''. The exception 'The entity type 'CustomerId' requires a primary key to be defined. If you intended to use a keyless entity type, call 'HasNoKey' in 'OnModelCreating'
+            builder.OwnsOne(o => o.CustomerId);
         }
     }
 }
