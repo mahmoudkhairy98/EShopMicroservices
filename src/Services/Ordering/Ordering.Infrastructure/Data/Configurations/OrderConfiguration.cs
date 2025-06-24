@@ -15,6 +15,11 @@ namespace Ordering.Infrastructure.Data.Configurations
             builder.Property(o => o.Id)
                    .HasConversion(orderId => orderId.Value, dbId => OrderId.Of(dbId));
 
+            builder.HasOne<Customer>()
+                   .WithMany()
+                   .HasForeignKey(o => o.CustomerId)
+                   .IsRequired();
+
             builder.HasMany(o => o.OrderItems)
                    .WithOne()
                    .HasForeignKey(oi => oi.OrderId);
@@ -114,7 +119,8 @@ namespace Ordering.Infrastructure.Data.Configurations
             //This line added to avoid this exception thrown while adding the migration
             //Command:Add-Migration InitialCreate -OutputDir Data/Migrations -Project Ordering.Infrastructure -StartupProject Ordering.API
             //Error:Unable to create a 'DbContext' of type ''. The exception 'The entity type 'CustomerId' requires a primary key to be defined. If you intended to use a keyless entity type, call 'HasNoKey' in 'OnModelCreating'
-            builder.OwnsOne(o => o.CustomerId);
+            //builder.OwnsOne(o => o.CustomerId);
+            //UPDATE: no need for this line because customer's relation was not configured
         }
     }
 }
