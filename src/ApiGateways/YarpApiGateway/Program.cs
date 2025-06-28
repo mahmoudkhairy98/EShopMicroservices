@@ -1,0 +1,22 @@
+using Microsoft.AspNetCore.RateLimiting;
+
+var builder = WebApplication.CreateBuilder(args);
+
+//Add services to the container.
+builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.Window = TimeSpan.FromSeconds(10);
+        options.PermitLimit = 5;
+    });
+});
+
+var app = builder.Build();
+
+//Configure the Http request pipeline.
+app.UseRateLimiter();//it is important to apply it before applying MapReverseProxy as per the documentation
+app.MapReverseProxy();
+
+app.Run();
